@@ -19,6 +19,8 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'static'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+print("Bahir waali call  ===========================================")
+
 class TextTransform:
     """Maps characters to integers and vice versa"""
     def __init__(self):
