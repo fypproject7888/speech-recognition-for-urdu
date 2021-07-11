@@ -22,9 +22,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 print("Bahir waali call  ===========================================")
 
 class TextTransform:
+    print("************************************** 111111111 *******************************************")
     """Maps characters to integers and vice versa"""
     def __init__(self):
-        print("************************************** 111111111 *******************************************")
         char_map_str = """
         ' 0
         <SPACE> 1
@@ -117,6 +117,7 @@ text_transform = TextTransform()
 
 
 class CNNLayerNorm(nn.Module):
+    print("************************************** 2222222 *******************************************")
     """Layer normalization built for cnns input"""
     def __init__(self, n_feats):
         super(CNNLayerNorm, self).__init__()
@@ -129,6 +130,7 @@ class CNNLayerNorm(nn.Module):
         return x.transpose(2, 3).contiguous() # (batch, channel, feature, time) 
 
 class ResidualCNN(nn.Module):
+    print("************************************** 333333 *******************************************")
     """Residual CNN inspired by https://arxiv.org/pdf/1603.05027.pdf
         except with layer norm instead of batch norm
     """
@@ -156,7 +158,7 @@ class ResidualCNN(nn.Module):
         return x # (batch, channel, feature, time)
 
 class BidirectionalGRU(nn.Module):
-
+    print("************************************** 4444444 *******************************************")
     def __init__(self, rnn_dim, hidden_size, dropout, batch_first):
         super(BidirectionalGRU, self).__init__()
 
@@ -174,9 +176,8 @@ class BidirectionalGRU(nn.Module):
         return x
 
 class SpeechRecognitionModel(nn.Module):
-    
+    print("************************************** 555555 *******************************************")
     def __init__(self, n_cnn_layers, n_rnn_layers, rnn_dim, n_class, n_feats, stride=2, dropout=0.1):
-        print("************************************** 22222222 *******************************************")
         super(SpeechRecognitionModel, self).__init__()
         n_feats = n_feats//2
         self.cnn = nn.Conv2d(1, 32, 3, stride=stride, padding=3//2)  # cnn for extracting heirachal features
@@ -211,6 +212,7 @@ class SpeechRecognitionModel(nn.Module):
         return x
 
 class IterMeter(object):
+    print("************************************** 666666 *******************************************")
     """keeps track of total iterations"""
     def __init__(self):
         self.val = 0
