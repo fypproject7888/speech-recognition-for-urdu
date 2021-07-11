@@ -22,6 +22,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 class TextTransform:
     """Maps characters to integers and vice versa"""
     def __init__(self):
+        print("************************************** 111111111 *******************************************")
         char_map_str = """
         ' 0
         <SPACE> 1
@@ -173,6 +174,7 @@ class BidirectionalGRU(nn.Module):
 class SpeechRecognitionModel(nn.Module):
     
     def __init__(self, n_cnn_layers, n_rnn_layers, rnn_dim, n_class, n_feats, stride=2, dropout=0.1):
+        print("************************************** 22222222 *******************************************")
         super(SpeechRecognitionModel, self).__init__()
         n_feats = n_feats//2
         self.cnn = nn.Conv2d(1, 32, 3, stride=stride, padding=3//2)  # cnn for extracting heirachal features
@@ -221,7 +223,7 @@ class IterMeter(object):
 PATH = "Trained_Model.pt"
 
 # Load
-trained_model = torch.load(PATH,map_location ='cpu')
+# trained_model = torch.load(PATH,map_location ='cpu')
 
 def GreedyDecoder(output, blank_label=28, collapse_repeated=True):
     arg_maxes = torch.argmax(output, dim=2)
