@@ -22,9 +22,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 print("Bahir waali call  ===========================================")
 
 class TextTransform:
-    print("************************************** 111111111 *******************************************")
     """Maps characters to integers and vice versa"""
     def __init__(self):
+        print("************************************** TextTransform-1 *******************************************")
         char_map_str = """
         ' 0
         <SPACE> 1
@@ -89,6 +89,7 @@ class TextTransform:
         self.index_map[1] = ' '
 
     def text_to_int(self, text):
+        print("************************************** TextTransform-2 *******************************************")
         """ Use a character map and convert text to an integer sequence """
         int_sequence = []
         for c in text:
@@ -100,6 +101,7 @@ class TextTransform:
         return int_sequence
 
     def int_to_text(self, labels):
+        print("************************************** TextTransform-3 *******************************************")
         """ Use a character map and convert integer labels to an text sequence """
         string = []
         for i in labels:
@@ -117,24 +119,25 @@ text_transform = TextTransform()
 
 
 class CNNLayerNorm(nn.Module):
-    print("************************************** 2222222 *******************************************")
     """Layer normalization built for cnns input"""
     def __init__(self, n_feats):
+        print("************************************** CNN-1 *******************************************")
         super(CNNLayerNorm, self).__init__()
         self.layer_norm = nn.LayerNorm(n_feats)
 
     def forward(self, x):
+        print("************************************** CNN-2 *******************************************")
         # x (batch, channel, feature, time)
         x = x.transpose(2, 3).contiguous() # (batch, channel, time, feature)
         x = self.layer_norm(x)
         return x.transpose(2, 3).contiguous() # (batch, channel, feature, time) 
 
 class ResidualCNN(nn.Module):
-    print("************************************** 333333 *******************************************")
     """Residual CNN inspired by https://arxiv.org/pdf/1603.05027.pdf
         except with layer norm instead of batch norm
     """
     def __init__(self, in_channels, out_channels, kernel, stride, dropout, n_feats):
+        print("************************************** Residual-1 *******************************************")
         super(ResidualCNN, self).__init__()
 
         self.cnn1 = nn.Conv2d(in_channels, out_channels, kernel, stride, padding=kernel//2)
@@ -145,6 +148,7 @@ class ResidualCNN(nn.Module):
         self.layer_norm2 = CNNLayerNorm(n_feats)
 
     def forward(self, x):
+        print("************************************** Residual-2 *******************************************")
         residual = x  # (batch, channel, feature, time)
         x = self.layer_norm1(x)
         x = F.gelu(x)
@@ -158,8 +162,8 @@ class ResidualCNN(nn.Module):
         return x # (batch, channel, feature, time)
 
 class BidirectionalGRU(nn.Module):
-    print("************************************** 4444444 *******************************************")
     def __init__(self, rnn_dim, hidden_size, dropout, batch_first):
+        print("************************************** Bi-1 *******************************************")
         super(BidirectionalGRU, self).__init__()
 
         self.BiGRU = nn.GRU(
@@ -169,6 +173,7 @@ class BidirectionalGRU(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
+        print("************************************** Bi-2 *******************************************")
         x = self.layer_norm(x)
         x = F.gelu(x)
         x, _ = self.BiGRU(x)
@@ -176,8 +181,8 @@ class BidirectionalGRU(nn.Module):
         return x
 
 class SpeechRecognitionModel(nn.Module):
-    print("************************************** 555555 *******************************************")
     def __init__(self, n_cnn_layers, n_rnn_layers, rnn_dim, n_class, n_feats, stride=2, dropout=0.1):
+        print("************************************** Speech-1 *******************************************")
         super(SpeechRecognitionModel, self).__init__()
         n_feats = n_feats//2
         self.cnn = nn.Conv2d(1, 32, 3, stride=stride, padding=3//2)  # cnn for extracting heirachal features
@@ -201,6 +206,7 @@ class SpeechRecognitionModel(nn.Module):
         )
 
     def forward(self, x):
+        print("************************************** Speech-2 *******************************************")
         x = self.cnn(x)
         x = self.rescnn_layers(x)
         sizes = x.size()
@@ -212,15 +218,17 @@ class SpeechRecognitionModel(nn.Module):
         return x
 
 class IterMeter(object):
-    print("************************************** 666666 *******************************************")
     """keeps track of total iterations"""
     def __init__(self):
+        print("************************************** Iter-1 *******************************************")
         self.val = 0
 
     def step(self):
+        print("************************************** Iter-2 *******************************************")
         self.val += 1
 
     def get(self):
+        print("************************************** Iter-3 *******************************************")
         return self.val
 
 # Specify a path
