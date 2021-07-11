@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gender Prediction From Speech</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link  rel="icon" href="{{ url_for('static',filename='images/icon.png') }}"/>
+    <link  rel="stylesheet"  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <link  rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <!-- <link  rel="stylesheet"  href="{{ url_for('static',filename='styles/mystyle.css') }}"/> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="http://use.fontawsome.com/releases/v5.0.8/js/all.js"></script>
+    <!-- <script src="{{ url_for('static',filename='js/myscript.js') }}"></script> -->
+
+    <style>
+      @font-face {
+        font-family: JameelNoori;
+        src: url('../static/Jameel Noori Nastaleeq Kasheeda.ttf');
+      }
+      body{
+        background: url(../static/images/background.jpeg);
+        background-size: cover;
+        background-position: center;
+      }
+
+      #left-card{
+        color: white; 
+        background: rgba(0, 0, 0, 0.7);
+        height: auto;
+        border-radius: 7%;
+      }
+
+      #salutation{
+        font-weight: bolder; 
+        color: green; 
+        text-align: left;
+      }
+
+      #left-card button.btn-secondary{
+        width: 200px; 
+        margin-left: 50px; 
+        margin-bottom: 50px
+      }
+
+      .modal-header{
+        background: #009cff; 
+        color: white;
+      }
+
+      #resultmodal .modal-title{
+        padding-left: 120px;
+      }
+
+      #instructionmodal .modal-title{
+        padding-left:135px;
+      }
+
+      #steps span{
+        font-weight: bolder;
+      }
+
+      #right-card {
+        padding: 100px 0px;
+        background: rgba(199, 201, 207, 0.92);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-radius: 7%;
+        align-items: center;
+        color: #fff;
+        height: auto;
+      }
+
+      #right-card form{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .circle {
+        background-color: #f03; /* Green */
+        border: none;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        text-decoration: none;
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+        border-radius: 50%;
+        outline: none;
+      }
+
+      .microphone {
+        font-size: 2.7rem;
+      }
+
+      #recording-msg{
+        display: none;
+      }
+
+      footer{
+        color: white;
+      }
+
+      footer a{
+        color: greenyellow;
+        font-weight: bold;
+      }
+
+      footer a:hover{
+        color: burlywood;
+        text-decoration: none;
+      }
+
+      .color-red{
+        color: #f03;
+      }
+
+      .color-green{
+        color: #218838;
+      }
+
+      .color-blue{
+        color: #009cff;
+      }
+
+      .color-orange{
+        color: #d8b90c;
+      }
+
+      .audio audio{
+        outline: none;
+      }
+
+      #result{
+        font-size: 24px;
+        font-family: JameelNoori;
+        font-weight: bold;
+      }
+
+      footer{
+        margin-top: 70px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <!-- Main div -->
+	
+	<div class="result-box mt-3">
+	</div>
+    <div class="container mt-5 mb-5">
+      <div class="row">
+
+        <!-- Left Card for Project Introduction -->
+        <div class="card col-lg-7 text-center" id="left-card">
+
+          <h1 class="m-5">
+            <strong>Speech Recognition System for the Urdu Language</strong>
+          </h1>
+
+          <!-- Salutaion -->
+          <p class="ml-5" id="salutation">
+            Asslam-o-Alaikum !
+          </p>
+
+          <!-- Introduction -->
+          <p class="ml-5 mr-5" style="text-align: justify">
+            Automatic Speech Recognition Systems (ASR) are used to convert the acoustic signals which are caught 
+            through the microphones into the sequence of words. The Automatic Speech Recognition Systems (ASR) 
+            empower the machines to react correctly, reliably, and effectively to human speech or voice and offer 
+            helpful and important services to the users
+          </p>
+
+          <!-- Read Instructions button -->
+          <button class="btn btn-secondary mt-5" data-toggle="modal" data-target="#instructionmodal">Read Instructions</button>
+
+        </div>
+
+        <!-- Right Card for System Inputs -->
+        <div class="col-lg-5" id="right-card">
+          <form method="POST" action="/predict" enctype="multipart/form-data">
+            <label class="circle">
+              <i class="fa fa-upload microphone" aria-hidden="true"></i>
+              <input type="file" style="display: none;" name="file">
+            </label> 
+            <button class="btn btn-primary" style="margin-top: 20px;" type="submit">Click to convert your Audio</button>
+          </form><br>
+          <p style="padding: 0px 30px;text-align: center;font-size: 20px;color:#218838;font-weight: bolder;">Select a file to upload that you desire to convert the text to speech</p>
+        </div>
+
+        <!-- Result Modal -->
+        <div
+          class="modal fade"
+          id="resultmodal"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="modelTitleId"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">
+                  <strong>Prediction of Model</strong>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body text-center">
+
+                <!-- Display of inputs Prediction Result Modal -->
+                <div class="row mt-3">
+                  <div class="col-12">
+                    <div>
+                      <div class="card">
+                        <div
+                          class="card-header"
+                          style="background-color: orange; color: white"
+                        >
+                          <strong>Selected Audio</strong>
+                        </div>
+                        <div class="card-body"><audio controls>
+                          <source src='../static/download.wav' type="audio/wav">
+                        Your browser does not support the audio element.
+                        </audio></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 mt-3">
+                    <div>
+                      <div class="card">
+                        <div
+                          class="card-header"
+                          style="background-color: #218838; color: white"
+                        >
+                          <strong>Our Model Prediction</strong>
+                        </div>
+                        <div class="card-body"><p id="result">{{our_model_prediction}}</p></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-12 mt-3">
+                    <div>
+                      <div class="card">
+                        <div
+                          class="card-header"
+                          style="background-color: #f03; color: white"
+                        >
+                          <strong>Google API Prediction</strong>
+                        </div>
+                        <div class="card-body"><p id="result">{{google_api_prediction}}</p></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instruction Modal -->
+        <div class="modal fade" id="instructionmodal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">
+                  <strong>Steps to Follow</strong>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+
+              <div class="modal-body">
+
+                <!-- Steps of Prediction -->
+                <div class="mt-3 ml-3 mb-3" id="steps">
+                  <span class="color-blue">Step 1 : </span> Click on <span class="color-green">Upload button</span> to open file chooser</span><br/>
+                  <span class="color-blue">Step 2 : </span> Select the <span class="color-red">Audio File (.wav)</span> from file chooser<br/>
+                  <span class="color-blue">Step 3 : </span> Your <span class="color-orange">selected file</span> will be passed to our model as well as to google API <br>
+                  <span class="color-blue">Step 4 : </span> The <span class="color-green">Predicted Text</span> will be displayed back to you<br/>
+                  <span class="color-blue">Step 5 : </span> You can <span class="color-red">compare</span> the <span class="color-orange">predicted text</span> of both models<br/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Copyrights -->
+    <footer class="text-center">Copyrights &copy; 2020
+      <a href="https://www.facebook.com/muhammadibtesamarshad/">Muhammad Ibtesam Arshad</a>
+      | All Rights Reserved
+    </footer>
+    
+    <script>
+  
+      window.onload = function () {
+			  if (document.getElementById("result").innerText) {
+				  $("#resultmodal").modal("show");
+			  }
+      };
+
+      function addMicrophoneStyling(){
+        var circle = document.getElementById("circle").style;
+        circle.background = "White";
+        circle.border = "5px solid #f03";
+
+        document.getElementById("recording-msg").style.display = "block";
+
+        var microphone = document.getElementById("microphone").style;
+        microphone.marginTop = "20px";
+        microphone.color = "#f03";
+      }
+
+      function removeMicrophoneStyling(){
+        var circle = document.getElementById("circle").style;
+        circle.background = "#f03";
+        circle.border = "none";
+
+        document.getElementById("recording-msg").style.display = "none";
+        
+        var microphone = document.getElementById("microphone").style;
+        microphone.marginTop = "26px";
+        microphone.color = "white";
+      }
+
+      function saveBlob(blob, fileName) {
+          var a = document.createElement("a");
+          document.body.appendChild(a);
+          a.style = "display: none";
+          
+          var url = window.URL.createObjectURL(blob);
+          a.href = url;
+          a.download = fileName;
+          a.click();
+          window.URL.revokeObjectURL(url);
+      }
+
+      function startRecording(){
+        
+        addMicrophoneStyling();
+
+        var device = navigator.mediaDevices.getUserMedia({audio:true});
+        var items = [];
+        device.then( stream => {
+          var recorder = new MediaRecorder(stream);
+          recorder.ondataavailable = e => {
+
+            items.push(e.data);
+            if(recorder.state == "inactive")
+            {
+              var blob = new Blob(items, {type: 'audio/mp3'});
+              //var formData = new FormData();
+              //formData.append('audio-file', blob);
+              saveBlob(blob, 'myRecording10.mp3');
+            }
+          }
+
+          recorder.start();
+          setTimeout(()=>{
+            recorder.stop();
+            removeMicrophoneStyling();
+          }, 4000);
+
+        });
+
+      }
+
+
+    
+    </script>
+
+  </body>
+</html>
